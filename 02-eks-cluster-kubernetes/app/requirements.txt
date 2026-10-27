@@ -1,0 +1,9 @@
+# -----------------------------------------------------------------------------
+# Python Dependencies
+# Minimal dependency list for the EKS demo application.
+# Flask serves the lightweight web interface — no database or cache required.
+# Pinned to exact version for reproducible builds across environments.
+# -----------------------------------------------------------------------------
+
+flask==3.1.1
+
