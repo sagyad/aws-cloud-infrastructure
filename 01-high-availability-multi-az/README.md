@@ -7,8 +7,7 @@ Production-ready multi-AZ infrastructure with auto-scaling, managed database, an
 
 ## 🏗️ Architecture Overview
 ```
-
- Internet
+                Internet
                    │
                 [ ALB ]
                /       \
