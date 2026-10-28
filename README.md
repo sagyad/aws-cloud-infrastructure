@@ -38,9 +38,28 @@ Real-world AWS infrastructure projects built with **Terraform**, deployed via **
 ---
 
 ## 📁 Repository Structure
-
-aws-cloud-infrastructure/ ├── .github/workflows/ # CI/CD pipelines (one per project) │ ├── 01-high-availability.yml │ └── 02-eks-cluster.yml ├── 01-high-availability-multi-az/ │ ├── terraform/ # Infrastructure code │ │ ├── modules/ # VPC, Compute, Database, Cache │ │ ├── environments/ # dev.tfvars, staging, prod │ │ └── *.tf # Root module │ └── docs/ # Architecture documentation ├── 02-eks-cluster-kubernetes/ │ ├── terraform/ # EKS infrastructure │ │ ├── modules/ # EKS, Nodes │ │ └── environments/ # dev.tfvars │ ├── k8s/ # Kubernetes manifests │ │ ├── deployment.yaml │ │ └── service.yaml │ ├── app/ # Sample application │ └── docs/ # Architecture documentation └── README.md # This file
-
+```
+aws-cloud-infrastructure/ 
+├── .github/workflows/ # CI/CD pipelines (one per project) 
+│ ├── 01-high-availability.yml 
+│ └── 02-eks-cluster.yml 
+├── 01-high-availability-multi-az/ 
+│ ├── terraform/ # Infrastructure code 
+│ │ ├── modules/ # VPC, Compute, Database, Cache 
+│ │ ├── environments/ # dev.tfvars, staging, prod 
+│ │ └── *.tf # Root module 
+│ └── docs/ # Architecture documentation 
+├── 02-eks-cluster-kubernetes/ 
+│ ├── terraform/ # EKS infrastructure 
+│ │ ├── modules/ # EKS, Nodes 
+│ │ └── environments/ # dev.tfvars 
+│ ├── k8s/ # Kubernetes manifests 
+│ │ ├── deployment.yaml 
+│ │ └── service.yaml 
+│ ├── app/ # Sample application 
+│ └── docs/ # Architecture documentation 
+└── README.md
+```
 
 ---
 
@@ -67,8 +86,27 @@ Pull Request → Terraform Plan (validate + review) Merge to Main → Terraform 
 | Cache | v0.1.0 | ElastiCache Redis replication group |
 
 ---
+## 🔧 Key Design Decisions
+
+- **Modular Architecture** — Reusable Terraform modules via Git registry (Spacelift)
+- **Multi-Environment** — dev, staging, prod using separate tfvars files
+- **Remote State** — S3 backend with DynamoDB locking
+- **CI/CD** — GitHub Actions with plan-on-PR, apply-on-merge pattern
+- **Tagging** — Consistent resource tagging via `locals.tf` common_tags
+
+## 🔐 Security
+
+- IAM roles with least privilege
+- Security groups per tier (ALB, App, Database, Cache)
+- Private subnets for application and data layers
+- No secrets in code — passed via environment variables or GitHub Secrets
 
 ## 🚀 Getting Started
+
+### Prerequisites
+- Terraform >= 1.17.0
+- AWS CLI configured
+- GitHub account with repository secrets set
 
 ```bash
 # Clone the repository
@@ -85,5 +123,6 @@ terraform plan -var-file=environments/dev.tfvars
 
 # Apply
 terraform apply -var-file=environments/dev.tfvars
+
 📜 License
 This project is for educational and portfolio purposes.
