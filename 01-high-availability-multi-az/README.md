@@ -6,6 +6,7 @@ Production-ready multi-AZ infrastructure with auto-scaling, managed database, an
 ---
 
 ## 🏗️ Architecture Overview
+```
 
  Internet
                    │
@@ -18,7 +19,7 @@ Production-ready multi-AZ infrastructure with auto-scaling, managed database, an
       [RDS Primary]  [RDS Standby]    ← Multi-AZ (automatic failover)
                    │
                [ Redis ]              ← ElastiCache Replication Group
-
+```
 ---
 
 ## 🛠️ Infrastructure Components
