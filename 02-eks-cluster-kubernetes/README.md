@@ -37,6 +37,7 @@ Production-ready Amazon EKS cluster with managed node groups deployed across mul
 ---
 
 ## 📁 Project Structure
+
 ```
 02-eks-cluster-kubernetes/ ├── terraform/ │ ├── modules/ │ │ ├── eks/ # EKS Cluster, IAM Role, OIDC Provider │ │ └── nodes/ # Node Group, IAM Role, Policy Attachments │ ├── environments/ │ │ └── dev.tfvars # Development environment config │ ├── provider.tf # AWS provider + S3 backend │ ├── variables.tf # Input variable declarations │ ├── locals.tf # Calculated values + common tags │ ├── main.tf # Root module — VPC (Git), EKS, Nodes │ └── outputs.tf # Cluster endpoint, name, certificate ├── k8s/ │ ├── deployment.yaml # 3 replica nginx deployment │ └── service.yaml # LoadBalancer service ├── app/ │ ├── main.py # Flask application (sample) │ ├── requirements.txt # Python dependencies │ └── Dockerfile # Container image definition └── docs/ └── architecture.md # Architecture decisions documentation
 ```
