@@ -36,7 +36,27 @@ Production-ready multi-AZ infrastructure with auto-scaling, managed database, an
 
 ## 📁 Project Structure
 
-01-high-availability-multi-az/ ├── terraform/ │ ├── modules/ │ │ ├── vpc/ # VPC, Subnets, IGW, NAT, Route Tables │ │ ├── compute/ # ALB, ASG, Launch Template, Security Groups │ │ ├── database/ # RDS MySQL Multi-AZ, Subnet Group │ │ └── cache/ # ElastiCache Redis Replication Group │ ├── environments/ │ │ ├── dev.tfvars # Development environment config │ │ ├── staging.tfvars # Staging environment config │ │ └── prod.tfvars # Production environment config │ ├── provider.tf # AWS provider + S3 backend │ ├── variables.tf # Input variable declarations │ ├── locals.tf # Calculated values + common tags │ ├── main.tf # Root module — connects all modules │ └── outputs.tf # ALB DNS, DB endpoint, Redis endpoint └── docs/ └── architecture.md # Architecture decisions documentation
+```
+01-high-availability-multi-az/
+├── terraform/
+│   ├── modules/
+│   │   ├── vpc/          # VPC, Subnets, IGW, NAT, Route Tables
+│   │   ├── compute/      # ALB, ASG, Launch Template, Security Groups
+│   │   ├── database/     # RDS MySQL Multi-AZ, Subnet Group
+│   │   └── cache/        # ElastiCache Redis Replication Group
+│   ├── environments/
+│   │   ├── dev.tfvars    # Development environment config
+│   │   ├── staging.tfvars # Staging environment config
+│   │   └── prod.tfvars   # Production environment config
+│   ├── provider.tf       # AWS provider + S3 backend
+│   ├── variables.tf      # Input variable declarations
+│   ├── locals.tf         # Calculated values + common tags
+│   ├── main.tf           # Root module — connects all modules
+│   └── outputs.tf        # ALB DNS, DB endpoint, Redis endpoint
+└── docs/
+    └── architecture.md   # Architecture decisions documentation
+```
+
 
 
 ---
@@ -65,35 +85,20 @@ terraform plan -var-file=environments/dev.tfvars -out=tfplan
 
 # Apply saved plan
 terraform apply "tfplan"
+```
 
-
-🔁 CI/CD Pipeline
+## CI/CD Pipeline
 GitHub Actions workflow: .github/workflows/01-high-availability.yml
 
-Table
+| Trigger | Action |
+|---------|--------|
+| Pull Request | Terraform Plan (review changes) |
+| Merge to Main | Terraform Plan + Apply (deploy) |
 
 
-
-Trigger
-
-
-Action
-
-
-Pull Request	Terraform Plan (review changes)
-Merge to Main	Terraform Plan + Apply (deploy)
-
-📊 Outputs
-Table
-
-
-
-Output
-
-
-Description
-
-
-alb_dns_name	Application Load Balancer DNS URL
-db_endpoint	RDS MySQL connection endpoint
-redis_endpoint	ElastiCache Redis connection endpoint
+## Outputs
+| Output | Description |
+|--------|-------------|
+| `eks_cluster_endpoint` | EKS cluster API server URL |
+| `eks_cluster_name` | EKS cluster name for kubectl config |
+| `eks_node_name` | Managed node group name |
