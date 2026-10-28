@@ -1,0 +1,33 @@
+
+# -----------------------------------------------------------------------------
+# Kubernetes Deployment — EKS Multi-AZ Demo Application
+# Runs 3 replicas of the web app across nodes for high availability.
+# Pods are spread across availability zones automatically by the scheduler.
+# Rolling update strategy ensures zero downtime during deployments.
+# -----------------------------------------------------------------------------
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eks-demo
+  labels:
+    app: eks-demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: eks-demo
+  template:
+    metadata:
+      labels:
+        app: eks-demo
+    spec:
+      containers:
+        - name: eks-demo
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          env:
+            - name: APP_VERSION
+              value: "v1"
+

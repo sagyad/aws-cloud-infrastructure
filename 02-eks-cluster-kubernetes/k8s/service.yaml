@@ -1,0 +1,21 @@
+
+# -----------------------------------------------------------------------------
+# Kubernetes Service — LoadBalancer
+# Exposes the EKS demo app to the internet via AWS Load Balancer.
+# AWS automatically provisions an ALB when type is LoadBalancer.
+# Traffic is distributed across all healthy pods.
+# -----------------------------------------------------------------------------
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: eks-demo-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: eks-demo
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+
