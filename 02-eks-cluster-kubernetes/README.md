@@ -37,9 +37,9 @@ Production-ready Amazon EKS cluster with managed node groups deployed across mul
 ---
 
 ## 📁 Project Structure
-
+ ```
 02-eks-cluster-kubernetes/ ├── terraform/ │ ├── modules/ │ │ ├── eks/ # EKS Cluster, IAM Role, OIDC Provider │ │ └── nodes/ # Node Group, IAM Role, Policy Attachments │ ├── environments/ │ │ └── dev.tfvars # Development environment config │ ├── provider.tf # AWS provider + S3 backend │ ├── variables.tf # Input variable declarations │ ├── locals.tf # Calculated values + common tags │ ├── main.tf # Root module — VPC (Git), EKS, Nodes │ └── outputs.tf # Cluster endpoint, name, certificate ├── k8s/ │ ├── deployment.yaml # 3 replica nginx deployment │ └── service.yaml # LoadBalancer service ├── app/ │ ├── main.py # Flask application (sample) │ ├── requirements.txt # Python dependencies │ └── Dockerfile # Container image definition └── docs/ └── architecture.md # Architecture decisions documentation
-
+ ```
 
 ---
 
@@ -62,77 +62,46 @@ cd terraform
 terraform init
 terraform plan -var-file=environments/dev.tfvars -out=tfplan
 terraform apply "tfplan"
-Step 2: Connect kubectl
-bash
+```
 
-
-
-
-
+### Step 2: Connect kubectl 
 aws eks update-kubeconfig --name 02-eks-k8s-dev-cluster --region eu-west-2
 kubectl get nodes
-Step 3: Deploy Application
+
+### Step 3: Deploy Application
 bash
-
-
-
-
 
 kubectl apply -f ../k8s/deployment.yaml
 kubectl apply -f ../k8s/service.yaml
 kubectl get services    # Get the LoadBalancer URL
-🔁 CI/CD Pipeline
-GitHub Actions workflow: .github/workflows/02-eks-cluster.yml
 
-Table
+## CI/CD Pipeline
 
+GitHub Actions workflow: `.github/workflows/02-eks-cluster.yml`
 
+| Trigger | Action |
+|---------|--------|
+| Pull Request | Terraform Plan (review changes) |
+| Merge to Main | Terraform Plan + Apply (deploy) |
 
-Trigger
+## Outputs
 
+| Output | Description |
+|--------|-------------|
+| eks_cluster_endpoint | EKS API server endpoint |
+| eks_cluster_name | Cluster name for kubeconfig |
+| eks_cluster_certificate | Base64 cluster certificate |
+| eks_node_name | Node group name |
 
-Action
+## Testing Performed
 
-
-Pull Request	Terraform Plan (review changes)
-Merge to Main	Terraform Plan + Apply (deploy)
-View more
-📊 Outputs
-Table
-
-
-
-Output
-
-
-Description
-
-
-eks_cluster_endpoint	EKS API server endpoint
-eks_cluster_name	Cluster name for kubeconfig
-eks_cluster_certificate	Base64 cluster certificate
-eks_node_name	Node group name
-View more
-🧪 Testing Performed
-Table
-
-
-
-Test
-
-
-Command
-
-
-Result
-
-
-Nodes healthy	kubectl get nodes	2 nodes Ready across 2 AZs
-Pods running	kubectl get pods -o wide	3 pods spread across nodes
-Self-healing	kubectl delete pod <name>	Replaced in 6 seconds
-Scale up	kubectl scale --replicas=5	5 pods running
-Scale down	kubectl scale --replicas=2	2 pods running
-Rolling update	kubectl set image	Zero-downtime update
-Rollback	kubectl rollout undo	Reverted to previous version
-System pods	kubectl get pods -n kube-system	aws-node, coredns, kube-proxy
-View more
+| Test | Command | Result |
+|------|---------|--------|
+| Nodes healthy | kubectl get nodes | 2 nodes Ready across 2 AZs |
+| Pods running | kubectl get pods -o wide | 3 pods spread across nodes |
+| Self-healing | kubectl delete pod | Replaced in 6 seconds |
+| Scale up | kubectl scale --replicas=5 | 5 pods running |
+| Scale down | kubectl scale --replicas=2 | 2 pods running |
+| Rolling update | kubectl set image | Zero-downtime update |
+| Rollback | kubectl rollout undo | Reverted to previous version |
+| System pods | kubectl get pods -n kube-system | aws-node, coredns, kube-proxy |
