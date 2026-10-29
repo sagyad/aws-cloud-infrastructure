@@ -13,3 +13,8 @@ output "cloudfront" {
   description = "CloudFront distribution URL — open this in your browser"
   value       = aws_cloudfront_distribution.main.domain_name
 }
+
+output "cloudfront_distribution_id" {
+  description = "CloudFront Distribution ID for cache invalidation"
+  value       = aws_cloudfront_distribution.main.id
+}

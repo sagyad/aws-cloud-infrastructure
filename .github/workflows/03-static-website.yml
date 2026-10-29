@@ -59,12 +59,26 @@ jobs:
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
 
       - name: Terraform Init
         run: terraform init
 
       - name: Terraform Apply
         run: terraform apply -var-file=environments/dev.tfvars -auto-approve
+
+      - name: Get Terraform Outputs
+        id: tf-output
+        run: |
+          BUCKET=$(terraform output -raw bucket_name)
+          DIST_ID=$(terraform output -raw cloudfront_distribution_id)
+          echo "BUCKET_NAME=$BUCKET" >> $GITHUB_OUTPUT
+          echo "DIST_ID=$DIST_ID" >> $GITHUB_OUTPUT
+
+    outputs:
+      bucket_name: ${{ steps.tf-output.outputs.BUCKET_NAME }}
+      dist_id: ${{ steps.tf-output.outputs.DIST_ID }}
 
   # --- Stage 3: Upload Website to S3 (only after apply) ---
   deploy-website:
@@ -78,15 +92,12 @@ jobs:
 
       - name: Upload to S3
         run: |
-          aws s3 sync ${{ env.WEBSITE_DIR }} s3://sy-tf-03-static-website-cloudfront \
+          aws s3 sync ${{ env.WEBSITE_DIR }} s3://${{ needs.terraform-apply.outputs.bucket_name }} \
             --delete \
             --cache-control "max-age=86400"
 
       - name: Invalidate CloudFront Cache
         run: |
-          DIST_ID=$(aws cloudfront list-distributions \
-            --query "DistributionList.Items[?Origins.Items[0].DomainName=='sy-tf-03-static-website-cloudfront.s3.eu-west-2.amazonaws.com'].Id" \
-            --output text)
           aws cloudfront create-invalidation \
-            --distribution-id $DIST_ID \
+            --distribution-id ${{ needs.terraform-apply.outputs.dist_id }} \
             --paths "/*"
