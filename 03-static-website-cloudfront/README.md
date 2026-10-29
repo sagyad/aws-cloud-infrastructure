@@ -22,7 +22,7 @@ Internet
 | S3 Bucket Policy | Allow CloudFront via OAC |
 
 ## 📁 Project Structure
-
+```
 03-static-website-cloudfront/ 
 ├── terraform/ 
 │ ├── environments/ 
@@ -37,7 +37,7 @@ Internet
 ├── docs/ 
 │ └── architecture.md # Architecture decisions 
 └── README.md # This file
-
+```
 ## 🔧 Key Design Decisions
 
 | Decision | Rationale |
