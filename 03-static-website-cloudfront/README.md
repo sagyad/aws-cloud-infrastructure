@@ -3,6 +3,7 @@
 Production-ready static website hosting on AWS using S3, CloudFront CDN.
 
 ## 🏗️ Architecture
+
 ```
 Internet 
     | 
@@ -23,6 +24,7 @@ Internet
 | S3 Bucket Policy | Allow CloudFront via OAC |
 
 ## 📁 Project Structure
+
 ```
 03-static-website-cloudfront/ 
 ├── terraform/ 
@@ -39,6 +41,7 @@ Internet
 │ └── architecture.md # Architecture decisions 
 └── README.md # This file
 ```
+
 ## 🔧 Key Design Decisions
 
 | Decision | Rationale |
