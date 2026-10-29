@@ -62,8 +62,6 @@ terraform apply "tfplan"
 | s3_bucket_name |	S3 bucket storing website files |
 | cloudfront_domain | CloudFront distribution URL |
 
-
-
 ## 🔄 CI/CD
 | Trigger | Action |
 |---------|--------|
