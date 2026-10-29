@@ -48,16 +48,16 @@ Internet
 
 ## 📊 Outputs
 
-|--------|--------|
 | Output | Description |
+|--------|--------|
 | api_endpoint   |	API Gateway invoke URL |
 | lambda_arn     |	Lambda function ARN |
 | dynamodb_table |	DynamoDB table name |
 
 ## 🔄 CI/CD Pipeline
 
-|---------|--------|
 | Trigger | Action |
+|---------|--------|
 | Pull Request  | Terraform Plan (review changes) |
 | Merge to Main	| Terraform Apply + Deploy Lambda |
 
