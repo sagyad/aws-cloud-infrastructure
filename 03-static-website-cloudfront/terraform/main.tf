@@ -7,7 +7,7 @@
 # --- 1. S3 Bucket — Stores website files ---
 resource "aws_s3_bucket" "main" {
   bucket = "${local.name_prefix}-website"
-
+  force_destroy = true
   tags = merge(local.common_tags, {
     Name = "${local.name_prefix}-website"
   })
