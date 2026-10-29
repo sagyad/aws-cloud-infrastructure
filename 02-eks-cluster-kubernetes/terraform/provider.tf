@@ -1,4 +1,9 @@
-
+# -----------------------------------------------------------------------------
+# Provider Configuration — EKS Cluster & Managed Kubernetes
+# Configures AWS provider and Terraform backend for EKS cluster deployment
+# with managed node groups and OIDC-based pod identity.
+# State stored in S3 with environment-isolated key paths.
+# -----------------------------------------------------------------------------
 
 terraform {
   required_providers {
