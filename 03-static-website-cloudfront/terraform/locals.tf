@@ -7,7 +7,7 @@
 
 locals {
   project_name = "03-static-website-cloudfront"
-  name_prefix  = "${local.project_name} - ${var.environment}"
+  name_prefix  = "${local.project_name}-${var.environment}"
   s3_origin_id = "${local.name_prefix}-s3-origin"
 
   common_tags = {
