@@ -5,6 +5,7 @@ Production-ready serverless REST API on AWS using API Gateway, Lambda, and Dynam
 
 ## 🏗️ Architecture
 
+```
 Internet 
     │ 
 [ API Gateway ] ── REST API endpoint (HTTPS) 
@@ -12,6 +13,7 @@ Internet
 [ Lambda ] ── Python function (auto-scales) 
     │ 
 [ DynamoDB ] ── NoSQL database (key-value)
+```
 
 ## 🧰 Tech Stack
 
@@ -45,7 +47,7 @@ Internet
 ```
 
 ## 📊 Outputs
-Table
+
 |--------|--------|
 | Output | Description |
 | api_endpoint   |	API Gateway invoke URL |
@@ -53,7 +55,7 @@ Table
 | dynamodb_table |	DynamoDB table name |
 
 ## 🔄 CI/CD Pipeline
-Table
+
 |---------|--------|
 | Trigger | Action |
 | Pull Request  | Terraform Plan (review changes) |
