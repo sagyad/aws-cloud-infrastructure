@@ -1,0 +1,92 @@
+
+# -----------------------------------------------------------------------------
+# CI/CD Pipeline — Project 03: Static Website + CloudFront
+# Triggers on push to feature branch or main branch for
+# files inside the 03-static-website-cloudfront/ directory.
+# Stages: Terraform Plan → Terraform Apply → Upload Website to S3
+# -----------------------------------------------------------------------------
+
+name: "03 — Static Website + CloudFront"
+
+on:
+  push:
+    branches:
+      - "feature/03-*"
+      - main
+    paths:
+      - "03-static-website-cloudfront/**"
+
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_REGION: "eu-west-2"
+  TF_WORKING_DIR: "03-static-website-cloudfront/terraform"
+  WEBSITE_DIR: "03-static-website-cloudfront/website"
+
+jobs:
+  # --- Stage 1: Terraform Plan (runs on every push) ---
+  terraform-plan:
+    name: "Terraform Plan"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.TF_WORKING_DIR }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Plan
+        run: terraform plan -var-file=environments/dev.tfvars -out=tfplan
+
+  # --- Stage 2: Terraform Apply (only on main branch) ---
+  terraform-apply:
+    name: "Terraform Apply"
+    needs: terraform-plan
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ env.TF_WORKING_DIR }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -var-file=environments/dev.tfvars -auto-approve
+
+  # --- Stage 3: Upload Website to S3 (only after apply) ---
+  deploy-website:
+    name: "Deploy Website to S3"
+    needs: terraform-apply
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Upload to S3
+        run: |
+          aws s3 sync ${{ env.WEBSITE_DIR }} s3://sy-tf-03-static-website-cloudfront \
+            --delete \
+            --cache-control "max-age=86400"
+
+      - name: Invalidate CloudFront Cache
+        run: |
+          DIST_ID=$(aws cloudfront list-distributions \
+            --query "DistributionList.Items[?Origins.Items[0].DomainName=='sy-tf-03-static-website-cloudfront.s3.eu-west-2.amazonaws.com'].Id" \
+            --output text)
+          aws cloudfront create-invalidation \
+            --distribution-id $DIST_ID \
+            --paths "/*"
