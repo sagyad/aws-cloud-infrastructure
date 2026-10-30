@@ -24,7 +24,7 @@ resource "aws_iam_role" "lambda" {
       Action = "sts:AssumeRole"
       Effect = "Allow"
       Principal = {
-        Service = "lambda.amazonaws.com"    # Only Lambda can wear this badge
+        Service = "lambda.amazonaws.com" # Only Lambda can wear this badge
       }
     }]
   })
@@ -41,22 +41,22 @@ resource "aws_iam_role_policy" "lambda" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect   = "Allow"
-        Action   = [
+        Effect = "Allow"
+        Action = [
           "logs:CreateLogGroup",
           "logs:CreateLogStream",
           "logs:PutLogEvents"
         ]
-        Resource = "arn:aws:logs:*:*:*"     # Can write logs
+        Resource = "arn:aws:logs:*:*:*" # Can write logs
       },
       {
-        Effect   = "Allow"
-        Action   = [
+        Effect = "Allow"
+        Action = [
           "dynamodb:GetItem",
           "dynamodb:PutItem",
           "dynamodb:Scan"
         ]
-        Resource = aws_dynamodb_table.main.arn  # Can read/write DB
+        Resource = aws_dynamodb_table.main.arn # Can read/write DB
       }
     ]
   })
@@ -65,12 +65,12 @@ resource "aws_iam_role_policy" "lambda" {
 # --- Create DynamoDB  ---
 resource "aws_dynamodb_table" "main" {
   name         = "${local.name_prefix}-table"
-  billing_mode = "PAY_PER_REQUEST"          # Serverless pricing
-  hash_key     = "id"                        # Primary key
+  billing_mode = "PAY_PER_REQUEST" # Serverless pricing
+  hash_key     = "id"              # Primary key
 
   attribute {
     name = "id"
-    type = "S"                          
+    type = "S"
   }
 
   tags = local.common_tags
@@ -79,14 +79,14 @@ resource "aws_dynamodb_table" "main" {
 # --- Lambda  ---
 data "archive_file" "lambda" {
   type        = "zip"
-  source_dir  = "${path.module}/../app"      #  Python code
+  source_dir  = "${path.module}/../app" #  Python code
   output_path = "${path.module}/lambda.zip"
 }
 
 resource "aws_lambda_function" "main" {
   filename         = data.archive_file.lambda.output_path
   function_name    = "${local.name_prefix}-function"
-  role             = aws_iam_role.lambda.arn  
+  role             = aws_iam_role.lambda.arn
   handler          = "main.handler"
   runtime          = var.lambda_runtime
   memory_size      = var.lambda_memory_size
